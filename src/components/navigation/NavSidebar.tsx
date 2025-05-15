@@ -15,7 +15,8 @@ import {
 import { FileText, ChartBar, Calculator, MessageSquare, User } from "lucide-react";
 
 const NavSidebar = () => {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
   const location = useLocation();
   const currentPath = location.pathname;
   
@@ -29,11 +30,11 @@ const NavSidebar = () => {
   };
   
   return (
-    <Sidebar className={`${collapsed ? "w-16" : "w-64"} glassmorphism`} collapsible>
+    <Sidebar className={`${collapsed ? "w-16" : "w-64"} glassmorphism`} collapsible="icon">
       <SidebarTrigger className="hidden" />
       
       <SidebarContent>
-        <SidebarGroup defaultOpen>
+        <SidebarGroup>
           <SidebarGroupLabel className="text-xs uppercase text-muted-foreground px-4 py-2">
             {!collapsed && "Main Navigation"}
           </SidebarGroupLabel>
