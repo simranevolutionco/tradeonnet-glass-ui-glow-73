@@ -1,12 +1,15 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Search as SearchIcon, CheckCircle, AlertTriangle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calculator, Download, Search as SearchIcon, Info, CheckCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import HelpTooltip from "@/components/ui/help-tooltip";
 import { Search } from "@/components/ui/search";
 
@@ -155,7 +158,7 @@ const ImportDutyCalculator = () => {
                       >
                         <div>
                           HS Code
-                          <HelpTooltip content="Harmonized System code used for classification of goods in international trade" />
+                          <HelpTooltip text="Harmonized System code used for classification of goods in international trade" />
                         </div>
                         {productCategory && !hsCode && (
                           <Button 
@@ -242,7 +245,7 @@ const ImportDutyCalculator = () => {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center">
                         <span>Basic Customs Duty</span>
-                        <HelpTooltip content="Standard duty rate applied on CIF value of goods" />
+                        <HelpTooltip text="Standard duty rate applied on CIF value of goods" />
                       </div>
                       <div className="text-right">
                         <div>${calculationResults.basicDuty}</div>
@@ -255,7 +258,7 @@ const ImportDutyCalculator = () => {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center">
                         <span>Additional Duty</span>
-                        <HelpTooltip content="Supplementary duty based on product category" />
+                        <HelpTooltip text="Supplementary duty based on product category" />
                       </div>
                       <div className="text-right">
                         <div>${calculationResults.additionalDuty}</div>
@@ -268,7 +271,7 @@ const ImportDutyCalculator = () => {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center">
                         <span>GST/VAT</span>
-                        <HelpTooltip content="Tax applied on value of goods plus all duties" />
+                        <HelpTooltip text="Tax applied on value of goods plus all duties" />
                       </div>
                       <div className="text-right">
                         <div>${calculationResults.gst}</div>

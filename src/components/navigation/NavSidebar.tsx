@@ -1,3 +1,4 @@
+
 import { useLocation, NavLink } from "react-router-dom";
 import { 
   Sidebar, 
@@ -11,7 +12,7 @@ import {
   SidebarMenuButton,
   useSidebar
 } from "@/components/ui/sidebar";
-import { FileText, ChartBar, Calculator, MessageSquare, User, Import, ExternalLink } from "lucide-react";
+import { FileText, ChartBar, Calculator, MessageSquare, User, ExternalLink } from "lucide-react";
 
 const NavSidebar = () => {
   const { state } = useSidebar();
@@ -24,7 +25,7 @@ const NavSidebar = () => {
     return `flex items-center p-2 rounded-md transition-all ${
       isActive 
         ? "bg-trade-purple/20 text-trade-purple-dark font-medium" 
-        : "hover:bg-white/40 text-foreground"
+        : "hover:bg-white/40 hover:scale-105 transition-all duration-300 text-foreground"
     }`;
   };
   
@@ -78,7 +79,7 @@ const NavSidebar = () => {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <NavLink to="/exports" className={getNavClass}>
-                    <ExternalLink className="h-5 w-5 mr-3" />
+                    <ExternalLink className="h-5 w-5 mr-3 rotate-45" />
                     {!collapsed && "Exports"}
                   </NavLink>
                 </SidebarMenuButton>
@@ -87,7 +88,7 @@ const NavSidebar = () => {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <NavLink to="/imports" className={getNavClass}>
-                    <Import className="h-5 w-5 mr-3" />
+                    <ExternalLink className="h-5 w-5 mr-3 rotate-[225deg]" />
                     {!collapsed && "Imports"}
                   </NavLink>
                 </SidebarMenuButton>

@@ -1,282 +1,342 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Upload, FileText, Check, AlertCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import HelpTooltip from "@/components/ui/help-tooltip";
-import { useToast } from "@/hooks/use-toast";
-import { FileUp, CheckCircle, AlertCircle, X } from "lucide-react";
+
+interface DocumentItem {
+  id: string;
+  name: string;
+  type: string;
+  required: boolean;
+  status: "pending" | "uploaded" | "rejected" | "approved";
+  uploadedAt?: string;
+  feedback?: string;
+}
 
 const ExportDocumentUpload = () => {
-  const [dragActive, setDragActive] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [completeness, setCompleteness] = useState(40);
-  const { toast } = useToast();
+  const [documentType, setDocumentType] = useState("");
+  const [files, setFiles] = useState<FileList | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
+  const documents: DocumentItem[] = [
+    {
+      id: "doc1",
+      name: "Commercial Invoice",
+      type: "invoice",
+      required: true,
+      status: "approved",
+      uploadedAt: "2025-05-12 09:23"
+    },
+    {
+      id: "doc2",
+      name: "Packing List",
+      type: "packing",
+      required: true,
+      status: "rejected",
+      uploadedAt: "2025-05-15 14:30",
+      feedback: "Document is incomplete. Please include all item quantities."
+    },
+    {
+      id: "doc3",
+      name: "Certificate of Origin",
+      type: "certificate",
+      required: true,
+      status: "pending"
+    },
+    {
+      id: "doc4",
+      name: "Bill of Lading",
+      type: "transport",
+      required: true,
+      status: "pending"
+    },
+    {
+      id: "doc5",
+      name: "Insurance Certificate",
+      type: "insurance",
+      required: false,
+      status: "pending"
     }
-  };
+  ];
   
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFiles(Array.from(e.dataTransfer.files));
-    }
-  };
+  const requiredDocuments = documents.filter(doc => doc.required);
+  const uploadedDocuments = documents.filter(doc => doc.status === "approved" || doc.status === "rejected");
+  const pendingDocuments = documents.filter(doc => doc.status === "pending");
+  const completionPercentage = (uploadedDocuments.length / requiredDocuments.length) * 100;
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleFiles(Array.from(e.target.files));
+    setFiles(e.target.files);
+  };
+  
+  const simulateUpload = () => {
+    if (!files || !documentType) return;
+    
+    setIsUploading(true);
+    setUploadProgress(0);
+    
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsUploading(false);
+          setFiles(null);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 300);
+  };
+  
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "approved":
+        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs flex items-center"><Check className="mr-1 h-3 w-3" /> Approved</span>;
+      case "rejected":
+        return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs flex items-center"><AlertCircle className="mr-1 h-3 w-3" /> Rejected</span>;
+      case "uploaded":
+        return <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs flex items-center">Reviewing</span>;
+      default:
+        return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">Pending</span>;
     }
-  };
-  
-  const handleFiles = (files: File[]) => {
-    // Simulate AI processing and auto-tagging
-    const newFiles = files.map(file => {
-      // Simulate AI detecting file type
-      let docType = "Unknown";
-      if (file.name.toLowerCase().includes("invoice")) {
-        docType = "Commercial Invoice";
-      } else if (file.name.toLowerCase().includes("packing")) {
-        docType = "Packing List";
-      } else if (file.name.toLowerCase().includes("certificate")) {
-        docType = "Certificate of Origin";
-      } else if (file.name.toLowerCase().includes("bill")) {
-        docType = "Bill of Lading";
-      }
-      
-      return {
-        file,
-        name: file.name,
-        type: docType,
-        size: (file.size / 1024).toFixed(1) + " KB",
-        status: Math.random() > 0.3 ? "valid" : "issues",
-        issues: Math.random() > 0.3 ? [] : ["Missing signatures", "Date format issue"]
-      };
-    });
-    
-    setUploadedFiles(prev => [...prev, ...newFiles]);
-    
-    // Update completeness based on document types covered
-    const uniqueDocTypes = new Set([
-      ...uploadedFiles.map(f => f.type),
-      ...newFiles.map(f => f.type)
-    ]);
-    const completenessValue = Math.min(
-      Math.floor((uniqueDocTypes.size / 5) * 100),
-      100
-    );
-    setCompleteness(completenessValue);
-    
-    toast({
-      title: "Documents uploaded",
-      description: `${newFiles.length} document(s) processed by AI`,
-    });
-  };
-  
-  const removeFile = (index: number) => {
-    const newFiles = [...uploadedFiles];
-    newFiles.splice(index, 1);
-    setUploadedFiles(newFiles);
-    
-    // Update completeness
-    const uniqueDocTypes = new Set(newFiles.map(f => f.type));
-    const completenessValue = Math.min(
-      Math.floor((uniqueDocTypes.size / 5) * 100),
-      100
-    );
-    setCompleteness(completenessValue);
-  };
-  
-  const getCompletionColor = () => {
-    if (completeness < 40) return "bg-red-500";
-    if (completeness < 80) return "bg-yellow-500";
-    return "bg-green-500";
   };
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-6">
-        <Card className="glassmorphism">
-          <CardHeader>
-            <CardTitle className="flex justify-between items-center">
-              <span>Document Upload</span>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm font-normal">Completeness</span>
-                <div className="w-32 h-4 bg-white/20 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full ${getCompletionColor()} transition-all duration-500`}
-                    style={{ width: `${completeness}%` }}
-                  />
+    <div className="space-y-6">
+      <Card className="glassmorphism">
+        <CardHeader>
+          <CardTitle>Export Document Upload</CardTitle>
+          <CardDescription>
+            Upload all required documents for your export transactions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="md:col-span-2 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="document-type">Document Type</Label>
+                  <Select value={documentType} onValueChange={setDocumentType}>
+                    <SelectTrigger id="document-type">
+                      <SelectValue placeholder="Select document type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="invoice">Commercial Invoice</SelectItem>
+                      <SelectItem value="packing">Packing List</SelectItem>
+                      <SelectItem value="certificate">Certificate of Origin</SelectItem>
+                      <SelectItem value="transport">Bill of Lading</SelectItem>
+                      <SelectItem value="insurance">Insurance Certificate</SelectItem>
+                      <SelectItem value="other">Other Document</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <span className="text-sm font-medium">{completeness}%</span>
-              </div>
-            </CardTitle>
-            <CardDescription>
-              Upload your export documents for AI validation
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div 
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 ${
-                dragActive 
-                  ? "border-trade-purple bg-trade-purple/5" 
-                  : "border-white/30 hover:border-white/50"
-              }`}
-              onDragEnter={handleDrag}
-              onDragOver={handleDrag}
-              onDragLeave={handleDrag}
-              onDrop={handleDrop}
-            >
-              <FileUp className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">
-                Drag & drop files or click to browse
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                Our AI will automatically detect and tag your documents
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => document.getElementById('file-upload')?.click()}
-                className="cursor-pointer"
-              >
-                Select Files
-                <input
-                  id="file-upload"
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </Button>
-            </div>
-            
-            {uploadedFiles.length > 0 && (
-              <div className="mt-6 space-y-4">
-                <h3 className="font-medium">Uploaded Documents</h3>
-                <div className="space-y-3">
-                  {uploadedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-white/10 rounded-lg border border-white/20">
-                      <div className="flex items-center space-x-4">
-                        <div>
-                          {file.status === "valid" ? (
-                            <CheckCircle className="h-5 w-5 text-green-500" />
-                          ) : (
-                            <AlertCircle className="h-5 w-5 text-yellow-500" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium">{file.name}</p>
-                          <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                            <Badge variant="outline">{file.type}</Badge>
-                            <span>{file.size}</span>
-                          </div>
-                          
-                          {file.status !== "valid" && file.issues?.length > 0 && (
-                            <div className="mt-1 text-xs text-amber-500">
-                              {file.issues.map((issue: string, i: number) => (
-                                <div key={i}>• {issue}</div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => removeFile(index)}
+                
+                <div className="space-y-2">
+                  <Label htmlFor="document-file">Upload File</Label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-md p-6 hover:border-trade-purple transition-colors">
+                    <div className="flex flex-col items-center">
+                      <Upload className="h-10 w-10 text-gray-400" />
+                      <p className="mt-2 text-sm text-gray-500">
+                        Drag and drop or click to browse
+                      </p>
+                      <p className="mt-1 text-xs text-gray-400">
+                        Supported formats: PDF, JPEG, PNG (Max 10MB)
+                      </p>
+                      <Input
+                        id="document-file"
+                        type="file"
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="mt-4"
+                        onClick={() => document.getElementById("document-file")?.click()}
                       >
-                        <X className="h-4 w-4" />
+                        Select File
                       </Button>
                     </div>
-                  ))}
+                  </div>
+                  {files && files.length > 0 && (
+                    <p className="text-xs mt-2">
+                      Selected: {files[0].name} ({Math.round(files[0].size / 1024)} KB)
+                    </p>
+                  )}
+                </div>
+                
+                {isUploading ? (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Uploading...</span>
+                      <span>{uploadProgress}%</span>
+                    </div>
+                    <Progress value={uploadProgress} className="h-2" />
+                  </div>
+                ) : (
+                  <Button 
+                    onClick={simulateUpload} 
+                    disabled={!files || !documentType}
+                    className="w-full"
+                  >
+                    <Upload className="mr-2 h-4 w-4" /> Upload Document
+                  </Button>
+                )}
+              </div>
+              
+              <div className="space-y-4">
+                <div className="p-4 bg-white/10 rounded-lg">
+                  <h3 className="text-sm font-medium mb-2">Document Requirements</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-start">
+                      <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
+                      <span>All documents must be in English or with English translation</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
+                      <span>Commercial documents must include buyer and seller details</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
+                      <span>Certificate of Origin must be authenticated by chamber of commerce</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="p-4 bg-blue-50/10 border border-blue-200/20 rounded-lg">
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-blue-500">Completion Status</h3>
+                    <Progress value={completionPercentage} className="h-2" />
+                    <p className="text-xs text-muted-foreground">
+                      {uploadedDocuments.length} of {requiredDocuments.length} required documents uploaded
+                    </p>
+                  </div>
                 </div>
               </div>
-            )}
+            </div>
             
-            {uploadedFiles.length > 0 && (
-              <Button className="w-full mt-6">
-                Submit Documents for Validation
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-        
-        {uploadedFiles.length > 0 && completeness < 100 && (
-          <Card className="glassmorphism border-yellow-200/30">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-amber-500 flex items-center">
-                <AlertCircle className="h-5 w-5 mr-2" />
-                Missing Documents
-              </CardTitle>
+            <div>
+              <h3 className="text-sm font-medium mb-3">Document Status</h3>
+              <div className="space-y-3">
+                {documents.map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="p-3 flex justify-between items-center rounded-lg bg-white/10 border border-white/20 hover:bg-white/20 transition-colors"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center">
+                        <FileText className="h-4 w-4 mr-2 text-trade-purple" />
+                        <span className="font-medium text-sm">{doc.name}</span>
+                        {doc.required && (
+                          <span className="ml-2 text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded-full">Required</span>
+                        )}
+                      </div>
+                      {doc.uploadedAt && (
+                        <p className="text-xs text-muted-foreground">
+                          Uploaded on {doc.uploadedAt}
+                        </p>
+                      )}
+                      {doc.feedback && (
+                        <p className="text-xs text-red-600 mt-1">
+                          {doc.feedback}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center">
+                      {getStatusBadge(doc.status)}
+                      {doc.status === "pending" && (
+                        <Button variant="ghost" size="sm" className="ml-2">
+                          <Upload className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-1">
+          <Card className="glassmorphism h-full">
+            <CardHeader>
+              <CardTitle className="text-lg">Document Verification</CardTitle>
+              <CardDescription>How our system verifies your documents</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="mb-4">The AI has detected that you're missing these required documents:</p>
-              <div className="space-y-2">
-                {!uploadedFiles.some(f => f.type === "Certificate of Origin") && (
-                  <div className="flex items-center">
-                    <AlertCircle className="h-4 w-4 text-amber-500 mr-2" />
-                    <span>Certificate of Origin</span>
-                    <HelpTooltip content="This document proves the country of manufacturing and is required for customs clearance" />
+              <div className="space-y-4">
+                <div className="flex items-center p-3 rounded-lg bg-white/10 border border-white/20">
+                  <div className="bg-blue-100 text-blue-700 h-8 w-8 rounded-full flex items-center justify-center mr-3">1</div>
+                  <div>
+                    <p className="text-sm font-medium">Automated Scanning</p>
+                    <p className="text-xs text-muted-foreground">AI validation of document format and structure</p>
                   </div>
-                )}
+                  <HelpTooltip text="Our system scans document structure and key fields to ensure compliance with export requirements" />
+                </div>
                 
-                {!uploadedFiles.some(f => f.type === "Packing List") && (
-                  <div className="flex items-center">
-                    <AlertCircle className="h-4 w-4 text-amber-500 mr-2" />
-                    <span>Packing List</span>
-                    <HelpTooltip content="Details the packaging of goods, including dimensions, weights and contents" />
+                <div className="flex items-center p-3 rounded-lg bg-white/10 border border-white/20">
+                  <div className="bg-blue-100 text-blue-700 h-8 w-8 rounded-full flex items-center justify-center mr-3">2</div>
+                  <div>
+                    <p className="text-sm font-medium">Data Extraction</p>
+                    <p className="text-xs text-muted-foreground">Key information extracted and validated</p>
                   </div>
-                )}
+                  <HelpTooltip text="Our AI identifies and extracts important information like dates, amounts, and product details from your documents" />
+                </div>
                 
-                {!uploadedFiles.some(f => f.type === "Bill of Lading") && (
-                  <div className="flex items-center">
-                    <AlertCircle className="h-4 w-4 text-amber-500 mr-2" />
-                    <span>Bill of Lading</span>
-                    <HelpTooltip content="This transport document serves as receipt of goods and evidence of the contract of carriage" />
+                <div className="flex items-center p-3 rounded-lg bg-white/10 border border-white/20">
+                  <div className="bg-blue-100 text-blue-700 h-8 w-8 rounded-full flex items-center justify-center mr-3">3</div>
+                  <div>
+                    <p className="text-sm font-medium">Human Review</p>
+                    <p className="text-xs text-muted-foreground">Expert verification of critical documents</p>
                   </div>
-                )}
+                  <HelpTooltip text="Documents requiring special attention are reviewed by our export documentation specialists" />
+                </div>
               </div>
             </CardContent>
           </Card>
-        )}
-      </div>
-      
-      <div className="lg:col-span-1">
-        <Card className="glassmorphism sticky top-6">
-          <CardHeader>
-            <CardTitle>Document Preview</CardTitle>
-            <CardDescription>
-              Select a document to preview
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-[400px] flex items-center justify-center bg-white/10 rounded-md border border-white/20">
-            {uploadedFiles.length > 0 ? (
-              <div className="text-center p-6">
-                <p className="text-muted-foreground">
-                  Select a document from the list to preview
-                </p>
+        </div>
+        
+        <div className="md:col-span-2">
+          <Card className="glassmorphism">
+            <CardHeader>
+              <CardTitle className="text-lg">Recent AI Document Analysis</CardTitle>
+              <CardDescription>Insights from our document processing system</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="p-3 rounded-lg bg-amber-50/10 border border-amber-200/20">
+                  <div className="flex items-start">
+                    <AlertCircle className="h-5 w-5 text-amber-500 mr-2 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-700">Potential Discrepancy Detected</p>
+                      <p className="text-xs mt-1">The commercial invoice value ($45,750) doesn't match the packing list total value ($45,570). This may cause delays in customs clearance.</p>
+                      <Button variant="outline" size="sm" className="mt-2 h-7 text-xs">Review Documents</Button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-3 rounded-lg bg-blue-50/10 border border-blue-200/20">
+                  <div className="flex items-start">
+                    <FileText className="h-5 w-5 text-blue-500 mr-2 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-blue-700">Missing HS Codes</p>
+                      <p className="text-xs mt-1">Your commercial invoice is missing HS codes for 3 out of 7 items. This information is required for customs clearance in the destination country.</p>
+                      <Button variant="outline" size="sm" className="mt-2 h-7 text-xs">Update Invoice</Button>
+                    </div>
+                  </div>
+                </div>
               </div>
-            ) : (
-              <div className="text-center p-6">
-                <p className="text-muted-foreground">
-                  No documents uploaded yet
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

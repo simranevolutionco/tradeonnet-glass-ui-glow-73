@@ -22,7 +22,7 @@ const Dashboard = () => {
     <MainLayout>
       <div className="flex flex-col gap-6">
         <header className="flex justify-between items-center">
-          <div>
+          <div className="transition-all duration-300 hover:translate-x-1">
             <h1 className="text-3xl font-bold">Welcome back, Sarah!</h1>
             <p className="text-muted-foreground">
               AI Tip: Your LC application might need more supporting documents
@@ -30,11 +30,11 @@ const Dashboard = () => {
           </div>
           
           <div className="flex gap-4 items-center">
-            <Button variant="outline" className="bg-white/50 btn-hover">
+            <Button variant="outline" className="bg-white/50 hover:bg-white/70 transition-all duration-300 hover:scale-105">
               <Bell className="h-4 w-4 mr-2" />
               <span className="sr-only sm:not-sr-only">Notifications</span>
             </Button>
-            <Button variant="outline" className="bg-white/50 btn-hover">
+            <Button variant="outline" className="bg-white/50 hover:bg-white/70 transition-all duration-300 hover:scale-105">
               <User className="h-4 w-4 mr-2" />
               <span className="sr-only sm:not-sr-only">Account</span>
             </Button>
@@ -81,7 +81,7 @@ const Dashboard = () => {
           
           <Tabs defaultValue="open" className="w-full">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-semibold">My Transactions</h2>
+              <h2 className="text-2xl font-semibold hover:text-trade-purple transition-all duration-300">My Transactions</h2>
               <TabsList className="glassmorphism">
                 <TabsTrigger value="open">Open</TabsTrigger>
                 <TabsTrigger value="pending">Pending</TabsTrigger>
@@ -148,7 +148,7 @@ const Dashboard = () => {
         ) : (
           <Button
             onClick={() => setShowChatbot(true)}
-            className="fixed bottom-6 right-6 rounded-full w-14 h-14 bg-gradient-to-r from-trade-purple to-trade-purple-dark btn-hover shadow-lg"
+            className="fixed bottom-6 right-6 rounded-full w-14 h-14 bg-gradient-to-r from-trade-purple to-trade-purple-dark hover:scale-110 transition-transform duration-300 shadow-lg"
           >
             <MessageSquare className="h-6 w-6" />
           </Button>
