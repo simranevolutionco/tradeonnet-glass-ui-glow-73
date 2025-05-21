@@ -62,10 +62,10 @@ const ActionCard = ({ title, description, icon: Icon, variant, actions }: Action
             <li key={index}>
               <Button
                 variant="ghost"
-                className={`w-full justify-between text-left hover:bg-white/30 ${isHovered ? "translate-x-1" : ""} transition-all duration-300`}
+                className="w-full justify-between text-left hover:bg-white/30 transition-all duration-300"
                 onClick={() => navigate(action.href)}
               >
-                {action.label}
+                <span>{action.label}</span>
                 <ArrowRight className={`h-4 w-4 transition-all duration-300 ${isHovered ? "translate-x-1" : ""}`} />
               </Button>
             </li>

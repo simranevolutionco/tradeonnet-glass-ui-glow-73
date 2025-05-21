@@ -49,9 +49,9 @@ const Dashboard = () => {
               icon={Plus}
               variant="primary"
               actions={[
-                { label: "Letter of Credit", href: "/letter-of-credit/new" },
-                { label: "Bank Guarantee", href: "/bank-guarantee/new" },
-                { label: "Remittance", href: "/remittance/new" },
+                { label: "Letter of Credit", href: "/letter-of-credit" },
+                { label: "Bank Guarantee", href: "/bank-guarantee" },
+                { label: "Remittance", href: "/remittance" },
               ]}
             />
             
