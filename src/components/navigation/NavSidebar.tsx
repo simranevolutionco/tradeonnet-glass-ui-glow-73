@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   useSidebar
 } from "@/components/ui/sidebar";
-import { FileText, ChartBar, Calculator, MessageSquare, User } from "lucide-react";
+import { FileText, ChartBar, Calculator, MessageSquare, User, Import, Export } from "lucide-react";
 
 const NavSidebar = () => {
   const { state } = useSidebar();
@@ -72,6 +72,24 @@ const NavSidebar = () => {
                   <NavLink to="/remittance" className={getNavClass}>
                     <Calculator className="h-5 w-5 mr-3" />
                     {!collapsed && "Remittance"}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <NavLink to="/exports" className={getNavClass}>
+                    <Export className="h-5 w-5 mr-3" />
+                    {!collapsed && "Exports"}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <NavLink to="/imports" className={getNavClass}>
+                    <Import className="h-5 w-5 mr-3" />
+                    {!collapsed && "Imports"}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>

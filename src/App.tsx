@@ -9,6 +9,8 @@ import Dashboard from "./pages/Dashboard";
 import LetterOfCredit from "./pages/LetterOfCredit";
 import BankGuarantee from "./pages/BankGuarantee"; 
 import Remittance from "./pages/Remittance";
+import Exports from "./pages/Exports";
+import Imports from "./pages/Imports";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/letter-of-credit" element={<LetterOfCredit />} />
           <Route path="/bank-guarantee" element={<BankGuarantee />} />
           <Route path="/remittance" element={<Remittance />} />
+          <Route path="/exports" element={<Exports />} />
+          <Route path="/imports" element={<Imports />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
