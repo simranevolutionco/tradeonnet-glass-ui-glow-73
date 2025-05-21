@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { FileUp, FileCheck, Check, X, ArrowRight } from "lucide-react";
+import { FileUp, FileCheck, Check, X, ArrowRight, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
@@ -554,7 +553,7 @@ const ExportLCApplication = () => {
               
               <div className="bg-amber-50/10 p-3 rounded-md border border-amber-200/10">
                 <div className="flex items-start">
-                  <AlertCircle className="h-5 w-5 text-amber-500 mr-2" />
+                  <AlertTriangle className="h-5 w-5 text-amber-500 mr-2" />
                   <div>
                     <span className="text-amber-500 font-medium">Reminder:</span> Ensure all document details match exactly to avoid discrepancies during negotiation.
                   </div>

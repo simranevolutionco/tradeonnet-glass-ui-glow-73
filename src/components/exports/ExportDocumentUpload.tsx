@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { HelpTooltip } from "@/components/ui/help-tooltip";
+import HelpTooltip from "@/components/ui/help-tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { FileUp, CheckCircle, AlertCircle, X } from "lucide-react";
 
@@ -147,8 +146,8 @@ const ExportDocumentUpload = () => {
                 Our AI will automatically detect and tag your documents
               </p>
               <Button
-                as="label"
-                htmlFor="file-upload"
+                variant="outline"
+                onClick={() => document.getElementById('file-upload')?.click()}
                 className="cursor-pointer"
               >
                 Select Files

@@ -1,14 +1,14 @@
-
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import React from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calculator, Download, HelpCircle, Info } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { HelpTooltip } from "@/components/ui/help-tooltip";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Search as SearchIcon, CheckCircle, AlertTriangle } from "lucide-react";
+import HelpTooltip from "@/components/ui/help-tooltip";
+import { Search } from "@/components/ui/search";
 
 const ImportDutyCalculator = () => {
   const [productCategory, setProductCategory] = useState("");
@@ -350,7 +350,7 @@ const ImportDutyCalculator = () => {
                   size="sm" 
                   className="absolute right-0 top-0 h-10"
                 >
-                  <Search className="h-4 w-4" />
+                  <SearchIcon className="h-4 w-4" />
                 </Button>
               </div>
             </div>

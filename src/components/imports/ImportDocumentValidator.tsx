@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,6 +46,10 @@ const ImportDocumentValidator = () => {
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(Array.from(e.target.files));
     }
+  };
+  
+  const handleFileClick = () => {
+    document.getElementById('import-file-upload')?.click();
   };
   
   const handleFiles = (files: File[]) => {
@@ -201,13 +204,12 @@ const ImportDocumentValidator = () => {
                 Upload commercial invoice, packing list, bill of lading, and certificates
               </p>
               <Button
-                as="label"
-                htmlFor="file-upload"
+                onClick={handleFileClick}
                 className="cursor-pointer"
               >
                 Select Files
                 <input
-                  id="file-upload"
+                  id="import-file-upload"
                   type="file"
                   multiple
                   className="hidden"

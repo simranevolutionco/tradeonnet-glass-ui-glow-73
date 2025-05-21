@@ -1,4 +1,3 @@
-
 import { useLocation, NavLink } from "react-router-dom";
 import { 
   Sidebar, 
@@ -12,7 +11,7 @@ import {
   SidebarMenuButton,
   useSidebar
 } from "@/components/ui/sidebar";
-import { FileText, ChartBar, Calculator, MessageSquare, User, Import, Export } from "lucide-react";
+import { FileText, ChartBar, Calculator, MessageSquare, User, Import, ExternalLink } from "lucide-react";
 
 const NavSidebar = () => {
   const { state } = useSidebar();
@@ -79,7 +78,7 @@ const NavSidebar = () => {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <NavLink to="/exports" className={getNavClass}>
-                    <Export className="h-5 w-5 mr-3" />
+                    <ExternalLink className="h-5 w-5 mr-3" />
                     {!collapsed && "Exports"}
                   </NavLink>
                 </SidebarMenuButton>

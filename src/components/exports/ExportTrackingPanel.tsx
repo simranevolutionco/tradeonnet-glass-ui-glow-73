@@ -1,8 +1,9 @@
-
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Truck, Package, Anchor, Ship, MapPin, Calendar, Clock } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 const ExportTrackingPanel = () => {
   return (
@@ -355,7 +356,7 @@ const ExportTrackingPanel = () => {
                 
                 <div className="bg-amber-50/20 p-4 rounded-lg border border-amber-200/20 mt-6">
                   <div className="flex items-start gap-2">
-                    <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5" />
+                    <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5" />
                     <div>
                       <div className="font-medium text-amber-500">AI Alert: Document Discrepancy Risk</div>
                       <p className="text-sm mt-1">
